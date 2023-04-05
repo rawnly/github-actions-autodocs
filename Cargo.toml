@@ -2,6 +2,9 @@
 name = "github-actions-autodocs"
 version = "0.1.0"
 edition = "2021"
+description = "Generate a basic readme for the given github action"
+license = "MIT"
+repository = "https://github.com/rawnly/github-actions-autodocs"
 
 bin = "gca"
 
