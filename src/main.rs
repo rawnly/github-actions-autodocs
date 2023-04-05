@@ -1,3 +1,4 @@
+use colored::*;
 use std::io::Write;
 use std::path::Path;
 
@@ -63,9 +64,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     if args.dry {
-        println!("Running in DRY mode. No file will be created.");
+        println!(
+            "{}",
+            format!(
+                "Running in {}. No file will be created",
+                "DRY mode".yellow()
+            )
+        );
         println!();
-        println!("{}", readme);
+        println!("{}", readme.dimmed());
 
         return Ok(());
     }
@@ -79,8 +86,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let f = Path::new(&filename);
 
     println!(
-        "{} created successfully!",
-        f.file_name().unwrap().to_str().unwrap()
+        "{} {}",
+        "created successfully!".bold().green(),
+        f.file_name().unwrap().to_str().unwrap().underline().green()
     );
 
     Ok(())
