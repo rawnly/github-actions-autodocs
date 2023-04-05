@@ -62,9 +62,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         outputs_markdown
     );
 
+    if args.dry {
+        println!("Running in DRY mode. No file will be created.");
+        println!();
+        println!("{}", readme);
+
+        return Ok(());
+    }
+
+    let filename = args.output.unwrap_or_else(|| "README.md".into());
+
     // write to file
-    let mut file = std::fs::File::create("README.md")?;
+    let mut file = std::fs::File::create(filename.clone())?;
     file.write_all(readme.as_bytes())?;
+
+    let f = Path::new(&filename);
+
+    println!(
+        "{} created successfully!",
+        f.file_name().unwrap().to_str().unwrap()
+    );
 
     Ok(())
 }

@@ -1,0 +1,17 @@
+name: generate-github-action-docs
+description: Runs or install github-action-autodocs
+
+inputs:
+  action-file:
+    description: Path to the action
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - uses: dtolnay/rust-toolchain@stable
+    - run: cargo install github-actions-autodocs
+      shell: bash
+    - if: ${{ inputs.action-file }}
+      shell: bash
+      run: github-action-autodocs --file ${{ inputs.action-file }}
