@@ -16,7 +16,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let file_path = Path::new(&args.file);
-    let action = Action::read_from_file(&file_path)?;
+    let action = Action::read_from_file(file_path)?;
 
     // Inputs
 
