@@ -4,7 +4,7 @@ use std::path::Path;
 
 use clap::Parser;
 use github_actions_autodocs::cli::Args;
-use github_actions_autodocs::models::Action;
+use github_actions_autodocs::models::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -18,31 +18,43 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let file_path = Path::new(&args.file);
     let action = Action::read_from_file(&file_path)?;
 
-    let mut inputs_markdown = String::from(
-        r#"
-## Inputs
+    // Inputs
+
+    // empty string if there are no inputs
+    let mut inputs_markdown = match action.inputs {
+        None => String::from("> No inputs"),
+        _ => String::from(
+            r#"
 | Name | Description | Default | Required | 
 | ---- | ----------- | ------- | -------- |
 "#,
-    );
-
-    let mut outputs_markdown = String::from(
-        r#"
-## Outputs 
-| Name | Description |
-| ---- | ----------- |
-"#,
-    );
+        ),
+    };
 
     if let Some(inputs) = action.inputs {
-        for (name, input) in inputs {
-            inputs_markdown += &format!("{}\n", input.to_markdown(&name));
+        for k in inputs.sorted_keys() {
+            let input = inputs.0.get(k).unwrap();
+            inputs_markdown += &format!("{}\n", input.to_markdown(k));
         }
     }
 
+    // Outputs
+
+    // empty string if there are no outputs
+    let mut outputs_markdown = match action.outputs {
+        None => String::from("> No outputs"),
+        _ => String::from(
+            r#"
+| Name | Description |
+| ---- | ----------- |
+"#,
+        ),
+    };
+
     if let Some(outputs) = action.outputs {
-        for (name, output) in outputs {
-            outputs_markdown += &format!("{}\n", output.to_markdown(&name));
+        for k in outputs.sorted_keys() {
+            let output = outputs.0.get(k).unwrap();
+            outputs_markdown += &format!("{}\n", output.to_markdown(k));
         }
     }
 
@@ -51,8 +63,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 # {}
 > {}
 
+## Inputs 
 {}
 
+## Outputs 
 {}
         "#,
         action

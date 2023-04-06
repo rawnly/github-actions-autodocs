@@ -15,7 +15,7 @@ pub struct Input {
     pub required: Option<bool>,
 
     #[serde(alias = "deprecationMessage")]
-    pub depreaction_message: Option<String>,
+    pub deprecation_message: Option<String>,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -23,8 +23,36 @@ pub struct Action {
     pub name: Option<String>,
     pub description: Option<String>,
 
-    pub outputs: Option<HashMap<String, Output>>,
-    pub inputs: Option<HashMap<String, Input>>,
+    pub outputs: Option<Outputs>,
+    pub inputs: Option<Inputs>,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Outputs(pub HashMap<String, Output>);
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Inputs(pub HashMap<String, Input>);
+
+pub trait SortedKeys {
+    fn sorted_keys(&self) -> Vec<&str>;
+}
+
+impl SortedKeys for Inputs {
+    fn sorted_keys(&self) -> Vec<&str> {
+        let mut sorted: Vec<&str> = self.0.keys().map(|k| k.as_str()).collect();
+        sorted.sort();
+
+        sorted
+    }
+}
+
+impl SortedKeys for Outputs {
+    fn sorted_keys(&self) -> Vec<&str> {
+        let mut sorted: Vec<&str> = self.0.keys().map(|k| k.as_str()).collect();
+        sorted.sort();
+
+        sorted
+    }
 }
 
 impl Action {
@@ -43,7 +71,7 @@ impl Default for Input {
             description: String::new(),
             default: None,
             required: Some(false),
-            depreaction_message: None,
+            deprecation_message: None,
         }
     }
 }
