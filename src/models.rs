@@ -5,7 +5,7 @@ use serde::{self, Deserialize};
 #[derive(Deserialize, Debug, Clone)]
 pub struct Output {
     pub description: String,
-    pub value: String,
+    pub value: Option<String>,
 }
 
 #[derive(Deserialize, Debug, Clone)]
